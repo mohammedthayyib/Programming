@@ -1,5 +1,7 @@
 const express = require('express')
 const app = express()
+app.use(express.json())//used to access request body, without this line we wont be able to access request body, it will be an empty object - this is a middleware -used to convert the request from json to object
+
 let notes = [
     {
       id: 1,
@@ -29,7 +31,6 @@ const generateId = () => {
   return maxId + 1
 }
 
-app.use(express.json())
 app.post('/api/notes', (request, response) => {
   // console.log(request.get('content-type'));
   // console.log(request.headers);
@@ -72,6 +73,12 @@ app.delete('/api/notes/:id', (request, response) => {
   notes = notes.filter(note => note.id !== id)
   response.status(204).end()
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(400).send({'error': 'unknown endpoint'})
+}
+
+app.use(unknownEndpoint)
 
 // const app = http.createServer((request, response) => {
 //     response.writeHead(200, {'Content-Type':'application/json'})
